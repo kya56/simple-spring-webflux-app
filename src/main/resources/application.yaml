@@ -1,0 +1,51 @@
+server:
+  port: 8080
+
+spring:
+  application.name: simple-spring-webflux-app
+
+  security:
+    oauth2:
+      client:
+        provider:
+          inventoryapp:
+            token-uri: ${AUTH_APP_URI:127.0.0.1:8989/oauth/token}
+
+  r2dbc:
+    host: ${DATABASE_HOST:127.0.0.1}
+    databaseName: ${DATABASE_NAME:inventory}
+    url: r2dbc:postgresql://${spring.r2dbc.host}:5432/${spring.r2dbc.databaseName}
+    username: ${DATABASE_USERNAME:postgres}
+    password: ${DATABASE_PASSWORD:root}
+
+  flyway:
+    locations: classpath:/db/migration
+    url: jdbc:postgresql://${spring.r2dbc.host}:5432/${spring.r2dbc.databaseName}
+    user: ${spring.r2dbc.username}
+    password: ${spring.r2dbc.password}
+    enabled: true
+
+  webflux:
+    base-path: /inventory
+
+management:
+  server:
+    port: 8090
+  endpoints:
+    web.exposure.include: 'info,health'
+  endpoint:
+    health:
+      show-details: always
+      probes:
+        enabled: true
+  health:
+    defaults.enabled: false
+    ping.enabled: true
+
+logging:
+  level:
+    root: ${LOG_LEVEL:INFO}
+    org.springframework.web: ERROR
+
+jwt:
+  secret: ${JWT_SECRET:4aaf63092d7bd4e92addf6c839f1560b33d94d42fe48548b45d8cf3a30750bf6f8d9ba12ad09e2661083f669154bc74117d5bb1f2b8ff160be7c83650b15ef2bd62915de5d2f5199cfad4833962ae6520a112338ac6c72c9d9294a619ffdadb280101c534e0ee323858591ca7cdec783fe0b69d5427b6e2f91064ce5ab1634e2bcbf0b0bb35193210c7467fa56411fdde35cde7d141c64f0b1609c739037296af493e3a35330e633df28f9fe8b793d6791c257c8cddf1231ad7db4bc68d5b010f5e7ab5b5282e5b359399aa988faa228394153dff0b77fdf4f2a952b6599ac3d6347dc35f93db3e8bed8a7f2b6a5aba1494af3df763ca6564746930d6b4570c8}
